@@ -1,3 +1,4 @@
+import 'package:ecom_user/pages/cart_page.dart';
 import 'package:ecom_user/pages/category_page.dart';
 import 'package:ecom_user/pages/launcher_page.dart';
 import 'package:ecom_user/pages/login_page.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         OrderPage.routeName : (context) => const OrderPage(),
         ProductDetailsPage.routeName : (context) => const ProductDetailsPage(),
         UserListPage.routeName : (context) => const UserListPage(),
+        CartPage.routeName : (context) => const CartPage(),
       },
     );
   }

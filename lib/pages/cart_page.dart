@@ -1,9 +1,9 @@
 import 'package:ecom_user/models/user_model.dart';
 import 'package:flutter/material.dart';
 
-class UserListPage extends StatelessWidget {
-  static const String routeName = '/userlist';
-  const UserListPage({super.key});
+class CartPage extends StatelessWidget {
+  static const String routeName = '/myCart';
+  const CartPage({super.key});
 
 
 
@@ -11,7 +11,7 @@ class UserListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User List'),
+        title: const Text('My Cart'),
       ),
     );
   }

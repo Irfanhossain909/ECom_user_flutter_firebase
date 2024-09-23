@@ -1,3 +1,5 @@
+import 'package:ecom_user/customwidgets/cart_badge.dart';
+import 'package:ecom_user/customwidgets/home_drawer.dart';
 import 'package:ecom_user/customwidgets/product_grid_item.dart';
 import 'package:ecom_user/pages/product_details.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
@@ -19,13 +21,14 @@ class ViewProductPage extends StatelessWidget {
     context.read<CartProvider>().getAllCartItemByUSer(
         context.read<FirebaseAuthProvider>().currentUser!.uid);
     return Scaffold(
+      drawer: HomeDrawer(),
         appBar: AppBar(
           title: const Text('View Product'),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.logout),
-            ),
+            Consumer<CartProvider>(
+                builder: (context, provider, child) => CartBadge(
+                  totalItems: provider.totalItemsInCart,
+                ),),
           ],
         ),
         body: Consumer<ProductProvider>(

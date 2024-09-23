@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 class CartProvider with ChangeNotifier {
   List<CartModel> cartList = [];
 
+
+  int get totalItemsInCart => cartList.length;
+
   bool isProductInCart(String pid) {
     bool tag = false;
     for(final cart in cartList){
