@@ -21,12 +21,31 @@ class CartProvider with ChangeNotifier {
     return tag;
   }
 
+  Future<void>increceCartQuantity(String uid, CartModel cart) {
+    final newQuantity = cart.quantity + 1;
+    return DbHelper.updateCartQuantity(cart.productId, uid, newQuantity);
+  }
+  Future<void>decreceCartQuantity(String uid, CartModel cart) async{
+    if(cart.quantity > 1){
+      final newQuantity = cart.quantity - 1;
+      await DbHelper.updateCartQuantity(cart.productId, uid, newQuantity);
+    }
+  }
+
+  num get getCartSubTotal {
+    num total = 0;
+    for(final cart in cartList){
+      total += cart.priceWithQuantity;
+  }
+  return total;
+}
+
   Future<void> addProductToCart(ProductModel product, String uid) {
     final cart = CartModel( //created cartModel object
       productId: product.id!,
       ProductName: product.productName,
       image: product.imageUrl,
-      price: product.price,
+      price: product.priceAfterDiscount,
     );
     return DbHelper.addToCart(cart, uid);
   }
@@ -34,6 +53,9 @@ class CartProvider with ChangeNotifier {
     return DbHelper.removeFromCart(pid, uid);
   }
 
+  Future<void>cartRemoveButtonCliced(String pid, String uid) {
+    return DbHelper.removeFromCart(pid, uid);
+  }
   getAllCartItemByUSer(String uid){
     DbHelper.getAllCartItemsByUser(uid).listen((snapshot){
       cartList = List.generate(snapshot.docs.length, (index) =>

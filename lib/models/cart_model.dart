@@ -31,5 +31,9 @@ class CartModel {
       price: map['price'] ?? 0,
       quantity: map['quantity'] ?? 1,
     );
+
+
   }
+
+  num get priceWithQuantity => price * quantity;
 }

@@ -45,6 +45,13 @@ class DbHelper {
         .doc(pid).delete();
 
   }
+  static Future<void> updateCartQuantity (String pid, String uid, num updatedQuantity) {
+    return _db.collection(_collectionUser)
+        .doc(uid)
+        .collection(_collectionCart)
+        .doc(pid)
+        .update({'quantity' : updatedQuantity});
+  }
 
   static Future<void> updateSingleProductField(String id, String field, dynamic value) {
     return _db.collection(_collectionProduct) //created this query methord that i can edit any field in details page,
