@@ -56,97 +56,38 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               fadeInCurve: Curves.bounceInOut,
             ),
           ),
-          const SizedBox(height: 10.0,),
-          ListTile(
-            title: Text(product.productName),
-            trailing: IconButton(
-              onPressed: () {
-                showSingleTextInputDialog(
-                    context: context,
-                    title: 'Update Title',
-                    onSave: (value) {
-                      context
-                          .read<ProductProvider>()
-                          .updateSingleProductField(product.id!, 'productName', value);
-                      showMsg(context, 'Updated');
-                    });
-              },
-              icon: const Icon(
-                Icons.edit,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(product.productName, style: const TextStyle(fontSize: 24.0),),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Column(
+                    children: [
+                      RichText(text: TextSpan(
+                        text: '${product.priceAfterDiscount}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.red,
+                        )
+                      )),
+                      RichText(text: TextSpan(
+                          text: '${product.price}',
+                          style: const TextStyle(
+                              color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          )
+                      )),
+
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
-          ListTile(
-            title: Text('price: ${product.price}TK'),
-            trailing: IconButton(
-              onPressed: () {
-                showSingleTextInputDialog(
-                  context: context,
-                  textInputType: TextInputType.number,
-                  positiveButtonText: 'Update',
-                  title: 'Update Price',
-                  onSave: (value) {
-                    context.read<ProductProvider>().updateSingleProductField(
-                        product.id!, 'price', num.parse(value));
-                    showMsg(context, 'Price Updated');
-                  },
-                );
-              },
-              icon: const Icon(
-                Icons.edit,
-              ),
-            ),
-          ),
-          ListTile(
-            title: Text('discount: ${product.discountPercent}%'),
-            trailing: IconButton(
-              onPressed: () {
-                showSingleTextInputDialog(
-                    textInputType: TextInputType.number,
-                    context: context,
-                    title: 'Discount',
-                    onSave: (value) {
-                      context.read<ProductProvider>().updateSingleProductField(
-                          product.id!, 'discountPercent', int.parse(value));
-                    });
-              },
-              icon: const Icon(
-                Icons.edit,
-              ),
-            ),
-          ),
-          ListTile(
-            title:
-                Text('after discount: ${product.priceAfterDiscount}TK'),
-          ),
-          ListTile(
-            title: Text('Stock: ${product.stock}'),
-            trailing: IconButton(
-              onPressed: () {
-                showSingleTextInputDialog(
-                    context: context,
-                    title: 'Update Stock',
-                    onSave: (value) {
-                      context.read<ProductProvider>().updateSingleProductField(
-                          product.id!, 'stock', num.parse(value));
-                      showMsg(context, 'Stock Updated');
-                    });
-              },
-              icon: const Icon(
-                Icons.edit,
-              ),
-            ),
-          ),
-          SwitchListTile(
-            value: product.available,
-            title: const Text('Available'),
-            onChanged: (value) {
-              context
-                  .read<ProductProvider>()
-                  .updateSingleProductField(product.id!, 'available', value);
-              showMsg(context, 'Status Updated');
-            },
-          ),
+          Card()
         ],
       ),
     );

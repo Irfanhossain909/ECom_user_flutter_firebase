@@ -19,7 +19,7 @@ class DbHelper {
       _db.collection(_collectionCategory).orderBy('name').snapshots();
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllProducts() =>
-      _db.collection(_collectionProduct).snapshots();
+      _db.collection(_collectionProduct).where('available', isEqualTo: true).snapshots();//use where('available', isEqualTo: true) for getting only avilable product from firebase,
 
   static Future<void> updateSingleProductField(String id, String field, dynamic value) {
     return _db.collection(_collectionProduct) //created this query methord that i can edit any field in details page,
