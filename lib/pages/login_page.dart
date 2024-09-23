@@ -1,4 +1,4 @@
-
+import 'package:ecom_user/pages/view_product.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -74,11 +74,19 @@ class _LauncherPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: _loginAdmin,
-                child: const Text('Login as admin'),
+                onPressed: () {
+                  _authenticate(true);
+                },
+                child: const Text('Login'),
               ),
               const SizedBox(
                 height: 20.0,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _authenticate(false);
+                },
+                child: const Text('Registration'),
               ),
               Text(
                 _errorMsg,
@@ -91,25 +99,36 @@ class _LauncherPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _loginAdmin() async{ //use async for dataloading and for future methord also use await for wait to get load the data.
+  Future<void> _authenticate(bool isLogin) async {
+    //use async for dataloading and for future methord also use await for wait to get load the data.
     // validator function validate the email and pass.
-    if(_formKey.currentState!.validate()){//_formKey.currentState!.validate() use for valodate the feiled,
+    if (_formKey.currentState!.validate()) {
+      //_formKey.currentState!.validate() use for valodate the feiled,
       final email = _emailController.text;
       final password = _passwordController.text;
 
-      EasyLoading.show(status: 'Pleace Wait...'); // use easy loading for reduce waiting time for use, and show a loading bar.
-      try{
-
-
-
-      } on FirebaseAuthException catch(error) { //Use FirebaseAuthException to catch spesefic error.
+      EasyLoading.show(
+          status:
+              'Pleace Wait...'); // use easy loading for reduce waiting time for use, and show a loading bar.
+      try {
+        if (isLogin) {
+          await context.read<FirebaseAuthProvider>().loginUser(email, password);
+        } else {
+          await context
+              .read<FirebaseAuthProvider>()
+              .registerUser(email, password);
+        }
+        EasyLoading.dismiss();
+        Navigator.pushReplacementNamed(context, ViewProductPage.routeName);
+      } on FirebaseAuthException catch (error) {
+        //Use FirebaseAuthException to catch spesefic error.
         setState(() {
           _errorMsg = 'Login Failed :${error.message}';
         });
-      }finally { // use finally block to confirm execute this block,in here use for Easyloading.dismiss,
+      } finally {
+        // use finally block to confirm execute this block,in here use for Easyloading.dismiss,
         EasyLoading.dismiss();
       }
-
     }
   }
 }
