@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:readmore/readmore.dart';
 import '../models/product_model.dart';
 import '../providers/product_provider.dart';
 import '../utils/widgets_functions.dart';
@@ -33,6 +34,51 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       appBar: AppBar(
         title: const Text('Details'),
       ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(left: 2,right: 2),
+        child: BottomAppBar(
+          color: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15), // No border radius
+                    ),
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(Icons.add_shopping_cart,color: Colors.yellow,),
+                  label: const Text('ADD',style: TextStyle(color: Colors.yellow,fontSize: 26),),
+                ),
+              ),
+              SizedBox(width: 10,),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15), // No border radius
+                    ),
+                  ),
+                  onPressed: () {},
+                  icon: const Icon(Icons.currency_bitcoin,color: Colors.yellow,),
+                  label: const Text('BUY',style: TextStyle(color: Colors.yellow,fontSize: 26),),
+                ),
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.favorite_border,
+                  )),
+            ],
+          ),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(10.0),
         children: [
@@ -61,33 +107,55 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(product.productName, style: const TextStyle(fontSize: 24.0),),
+                Text(
+                  product.productName,
+                  style: const TextStyle(fontSize: 24.0),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Column(
                     children: [
-                      RichText(text: TextSpan(
-                        text: '${product.priceAfterDiscount}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.red,
-                        )
-                      )),
-                      RichText(text: TextSpan(
-                          text: '${product.price}',
-                          style: const TextStyle(
-                              color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                          )
-                      )),
-
+                      RichText(
+                          text: TextSpan(
+                              text: '${product.priceAfterDiscount}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.red,
+                              ))),
+                      RichText(
+                          text: TextSpan(
+                              text: '${product.price}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                decoration: TextDecoration.lineThrough,
+                              ))),
                     ],
                   ),
                 )
               ],
             ),
           ),
-          Card()
+          SingleChildScrollView(
+            child: Card(
+              child: ReadMoreText(
+                product.description,
+                trimLines: 6,
+                textAlign: TextAlign.justify,
+                trimMode: TrimMode.Line,
+                trimCollapsedText: 'see more',
+                trimExpandedText: 'see less',
+                lessStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[700],
+                ),
+                moreStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[700],
+                ),
+                style: const TextStyle(fontSize: 16.0, height: 2),
+              ),
+            ),
+          ),
         ],
       ),
     );

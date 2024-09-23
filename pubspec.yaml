@@ -47,6 +47,7 @@ dependencies:
   flutter_easyloading:
   google_fonts:
   flutter_rating_bar:
+  readmore:
 
 dev_dependencies:
   flutter_test:
