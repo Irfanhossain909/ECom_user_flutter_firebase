@@ -55,7 +55,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   label: const Text('ADD',style: TextStyle(color: Colors.yellow,fontSize: 26),),
                 ),
               ),
-              SizedBox(width: 10,),
+              const SizedBox(width: 10,),
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(

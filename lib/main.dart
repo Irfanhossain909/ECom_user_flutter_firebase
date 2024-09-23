@@ -6,6 +6,7 @@ import 'package:ecom_user/pages/product_details.dart';
 import 'package:ecom_user/pages/user_page.dart';
 import 'package:ecom_user/pages/view_product.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
+import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/providers/product_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ void main() async {
       providers: [// only provider added
         ChangeNotifierProvider(create: (context) => FirebaseAuthProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
       ],
       child: const MyApp()));
 }

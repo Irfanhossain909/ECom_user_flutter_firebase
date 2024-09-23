@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_user/models/product_model.dart';
 import 'package:ecom_user/pages/product_details.dart';
+import 'package:ecom_user/providers/auth_provider.dart';
+import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductGridItem extends StatelessWidget {
   const ProductGridItem({super.key, required this.product});
@@ -73,21 +76,44 @@ class ProductGridItem extends StatelessWidget {
                         ))
                       ],
                     ),
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.red),
-                        // Set background color to red
-                        foregroundColor: WidgetStateProperty.all(Colors.yellow),
-                        // Set text color to yellow
-                        side: WidgetStateProperty.all(const BorderSide(
-                            color: Colors
-                                .white)), // Optional: Set the border color to match the background
-                      ),
-                      onPressed: () {},
-                      child: const Text(
-                        'Add',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                    Consumer<CartProvider>(
+                      builder: (context, provider, child) {
+                        final isInCart = provider.isProductInCart(product.id!);
+                        return OutlinedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all(Colors.red),
+                            // Set background color to red
+                            foregroundColor:
+                                WidgetStateProperty.all(Colors.yellow),
+                            // Set text color to yellow
+                            side: WidgetStateProperty.all(const BorderSide(
+                                color: Colors
+                                    .white)), // Optional: Set the border color to match the background
+                          ),
+                          onPressed: () {
+                            if (isInCart) {
+                              provider.removeFromCart(
+                                  product.id!,
+                                  context
+                                      .read<FirebaseAuthProvider>()
+                                      .currentUser!
+                                      .uid);
+                            } else {
+                              provider.addProductToCart(
+                                  product,
+                                  context
+                                      .read<FirebaseAuthProvider>()
+                                      .currentUser!
+                                      .uid);
+                            }
+                          },
+                          child: Text(
+                            isInCart ? 'Remove' : 'Add',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
