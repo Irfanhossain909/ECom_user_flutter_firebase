@@ -1,9 +1,10 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user/models/cart_model.dart';
 import 'package:ecom_user/models/order_model.dart';
 import 'package:ecom_user/models/user_model.dart';
+
+import '../models/ratting_model.dart';
 
 class DbHelper {
   DbHelper._(); // for private DbHelper class.thits no one can create this class object.
@@ -15,6 +16,7 @@ class DbHelper {
   static const String _collectionCart = 'MyCart';
   static const String _collectionOrderSettings = 'OrderSettings';
   static const String _collectionOrder = 'Orders';
+  static const String _collectionRatings = 'Ratings';
   static const String _documentOrderConstants = 'OrderConstants';
 
   static Future<void>addNewUser(UserModel user) {
@@ -89,9 +91,31 @@ class DbHelper {
       final productDoc = _db.collection(_collectionProduct).doc(cart.productId);
       wb.update(productDoc, {'stock' : newStock});
     }
-
-
     return wb.commit();
+  }
+
+  static Future<void>addRating(RattingModel ratingModel) async{
+    final wb = _db.batch();
+    final ratingDoc = _db.collection(_collectionProduct)//go _collectionProduct
+        .doc(ratingModel.productId)//then go ratingModel.productId
+        .collection(_collectionRatings)// create new _collectionRatings
+        .doc(ratingModel.userModer.uid);//uid set new doc user id
+    wb.set(ratingDoc, ratingModel.toMap());
+    return wb.commit();
+  }
+
+
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getRatingsByProduct(String pid) {
+    return _db.collection(_collectionProduct)
+        .doc(pid)
+        .collection(_collectionRatings).get();
+
+  }
+  static Future<void>updateProductAvgRating(String pid, double avgRating) {
+    return _db.collection(_collectionProduct)
+        .doc(pid)
+        .update({'avgRatting' : avgRating});
   }
 
 

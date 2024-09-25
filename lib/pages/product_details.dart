@@ -1,6 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecom_user/models/ratting_model.dart';
+import 'package:ecom_user/providers/auth_provider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import '../models/product_model.dart';
@@ -18,6 +23,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late ProductModel product; //decleard a veriable to recive product id.
+  double rating = 1.0;
 
   @override
   void didChangeDependencies() {
@@ -35,7 +41,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         title: const Text('Details'),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 2,right: 2),
+        padding: const EdgeInsets.only(left: 2, right: 2),
         child: BottomAppBar(
           color: Colors.transparent,
           clipBehavior: Clip.antiAlias,
@@ -47,27 +53,43 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15), // No border radius
+                      borderRadius:
+                          BorderRadius.circular(15), // No border radius
                     ),
                   ),
                   onPressed: () {},
-                  icon: const Icon(Icons.add_shopping_cart,color: Colors.yellow,),
-                  label: const Text('ADD',style: TextStyle(color: Colors.yellow,fontSize: 26),),
+                  icon: const Icon(
+                    Icons.add_shopping_cart,
+                    color: Colors.yellow,
+                  ),
+                  label: const Text(
+                    'ADD',
+                    style: TextStyle(color: Colors.yellow, fontSize: 26),
+                  ),
                 ),
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15), // No border radius
+                      borderRadius:
+                          BorderRadius.circular(15), // No border radius
                     ),
                   ),
                   onPressed: () {},
-                  icon: const Icon(Icons.currency_bitcoin,color: Colors.yellow,),
-                  label: const Text('BUY',style: TextStyle(color: Colors.yellow,fontSize: 26),),
+                  icon: const Icon(
+                    Icons.currency_bitcoin,
+                    color: Colors.yellow,
+                  ),
+                  label: const Text(
+                    'BUY',
+                    style: TextStyle(color: Colors.yellow, fontSize: 26),
+                  ),
                 ),
               ),
               IconButton(
@@ -156,8 +178,61 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
           ),
+          Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Rate this product',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                RatingBar.builder(
+                  initialRating: 0.0,
+                  minRating: 1.0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (value) {
+                    rating = value;
+                  },
+                ),
+                TextButton(
+                  onPressed: _updateRatting,
+                  child: const Text('Submit'),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
+  }
+
+  void _updateRatting() async{
+
+    EasyLoading.show(status: 'Update Your Rating');
+    final ratingModel = RattingModel(
+      userModer: context.read<FirebaseAuthProvider>().userModel!,
+      productId: product.id!,
+      ratting: rating,
+    );
+    try{
+      await context.read<ProductProvider>().addRatings(ratingModel);
+      showMsg(context, 'Rating Updated');
+      EasyLoading.dismiss();
+    }catch (error){
+      showMsg(context, 'Failed to update rating');
+      EasyLoading.dismiss();
+    }
   }
 }

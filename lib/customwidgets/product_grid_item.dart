@@ -5,6 +5,7 @@ import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 class ProductGridItem extends StatelessWidget {
@@ -27,6 +28,7 @@ class ProductGridItem extends StatelessWidget {
             child: Stack(
               children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 14.0,
@@ -51,7 +53,7 @@ class ProductGridItem extends StatelessWidget {
                     Text(
                       product.productName,
                       style: const TextStyle(
-                        fontSize: 20.0,
+                        fontSize:20.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -76,44 +78,78 @@ class ProductGridItem extends StatelessWidget {
                         ))
                       ],
                     ),
-                    Consumer<CartProvider>(
-                      builder: (context, provider, child) {
-                        final isInCart = provider.isProductInCart(product.id!);
-                        return OutlinedButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.red),
-                            // Set background color to red
-                            foregroundColor:
-                                WidgetStateProperty.all(Colors.yellow),
-                            // Set text color to yellow
-                            side: WidgetStateProperty.all(const BorderSide(
-                                color: Colors
-                                    .white)), // Optional: Set the border color to match the background
-                          ),
-                          onPressed: () {
-                            if (isInCart) {
-                              provider.removeFromCart(
-                                  product.id!,
-                                  context
-                                      .read<FirebaseAuthProvider>()
-                                      .currentUser!
-                                      .uid);
-                            } else {
-                              provider.addProductToCart(
-                                  product,
-                                  context
-                                      .read<FirebaseAuthProvider>()
-                                      .currentUser!
-                                      .uid);
-                            }
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Consumer<CartProvider>(
+                          builder: (context, provider, child) {
+                            final isInCart = provider.isProductInCart(product.id!);
+                            return OutlinedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.red),
+                                // Set background color to red
+                                foregroundColor:
+                                    WidgetStateProperty.all(Colors.yellow),
+                                // Set text color to yellow
+                                side: WidgetStateProperty.all(const BorderSide(
+                                    color: Colors
+                                        .white)), // Optional: Set the border color to match the background
+                              ),
+                              onPressed: () {
+                                if (isInCart) {
+                                  provider.removeFromCart(
+                                      product.id!,
+                                      context
+                                          .read<FirebaseAuthProvider>()
+                                          .currentUser!
+                                          .uid);
+                                } else {
+                                  provider.addProductToCart(
+                                      product,
+                                      context
+                                          .read<FirebaseAuthProvider>()
+                                          .currentUser!
+                                          .uid);
+                                }
+                              },
+                              child: Text(
+                                isInCart ? 'Remove' : 'Add',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            );
                           },
-                          child: Text(
-                            isInCart ? 'Remove' : 'Add',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        );
-                      },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RatingBar.builder(
+                              ignoreGestures: true,
+                              initialRating: product.avgRatting,
+                              minRating: 1.0,
+                              direction: Axis.horizontal,
+                              itemCount: 5,
+                              itemSize: 10,
+                              itemBuilder: (context, _) => const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                              ),
+                              onRatingUpdate: (value) {},
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text(
+                                product.avgRatting.toString(),
+                                style: const TextStyle(
+                                    fontSize: 10, fontWeight: FontWeight.w800),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
