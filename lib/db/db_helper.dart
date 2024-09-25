@@ -10,6 +10,8 @@ class DbHelper {
   static const String _collectionCategory = 'Categories';
   static const String _collectionProduct = 'Products';
   static const String _collectionCart = 'MyCart';
+  static const String _collectionOrderSettings = 'OrderSettings';
+  static const String _documentOrderConstants = 'OrderConstants';
 
   static Future<void>addNewUser(UserModel user) {
     return _db.collection(_collectionUser)//create a collection in database,
@@ -27,6 +29,11 @@ class DbHelper {
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCategoryList() =>
       _db.collection(_collectionCategory).orderBy('name').snapshots();
+
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getAllOrderConstants() =>
+      _db.collection(_collectionOrderSettings).doc(_documentOrderConstants).snapshots();
+
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllProducts() =>
       _db.collection(_collectionProduct).where('available', isEqualTo: true).snapshots();//use where('available', isEqualTo: true) for getting only avilable product from firebase,

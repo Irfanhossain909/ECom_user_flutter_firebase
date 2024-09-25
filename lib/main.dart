@@ -1,5 +1,6 @@
 import 'package:ecom_user/pages/cart_page.dart';
 import 'package:ecom_user/pages/category_page.dart';
+import 'package:ecom_user/pages/checkOut_page.dart';
 import 'package:ecom_user/pages/launcher_page.dart';
 import 'package:ecom_user/pages/login_page.dart';
 import 'package:ecom_user/pages/order_page.dart';
@@ -8,6 +9,7 @@ import 'package:ecom_user/pages/user_page.dart';
 import 'package:ecom_user/pages/view_product.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
+import 'package:ecom_user/providers/order_provider.dart';
 import 'package:ecom_user/providers/product_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => FirebaseAuthProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
       ],
       child: const MyApp()));
 }
@@ -55,6 +58,7 @@ class MyApp extends StatelessWidget {
         ProductDetailsPage.routeName : (context) => const ProductDetailsPage(),
         UserListPage.routeName : (context) => const UserListPage(),
         CartPage.routeName : (context) => const CartPage(),
+        CheckoutPage.routeName : (context) => const CheckoutPage(),
       },
     );
   }

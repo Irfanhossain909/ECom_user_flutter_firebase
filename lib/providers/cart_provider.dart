@@ -43,7 +43,7 @@ class CartProvider with ChangeNotifier {
   Future<void> addProductToCart(ProductModel product, String uid) {
     final cart = CartModel( //created cartModel object
       productId: product.id!,
-      ProductName: product.productName,
+      productName: product.productName,
       image: product.imageUrl,
       price: product.priceAfterDiscount,
     );

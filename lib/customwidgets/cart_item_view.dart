@@ -42,7 +42,7 @@ class CartItemView extends StatelessWidget {
               fadeInDuration: const Duration(milliseconds: 1000),
               fadeInCurve: Curves.bounceInOut,
             ),
-            title: Text(cartModel.ProductName),
+            title: Text(cartModel.productName),
             trailing: Text(
               '$currency${cartModel.priceWithQuantity}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),

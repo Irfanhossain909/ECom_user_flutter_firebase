@@ -1,9 +1,9 @@
 import 'package:ecom_user/customwidgets/cart_badge.dart';
 import 'package:ecom_user/customwidgets/home_drawer.dart';
 import 'package:ecom_user/customwidgets/product_grid_item.dart';
-import 'package:ecom_user/pages/product_details.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
+import 'package:ecom_user/providers/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +18,11 @@ class ViewProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<ProductProvider>().getAllCategory();
     context.read<ProductProvider>().getAllProducts();
+    context.read<OrderProvider>().getOrderConstants();
     context.read<CartProvider>().getAllCartItemByUSer(
         context.read<FirebaseAuthProvider>().currentUser!.uid);
     return Scaffold(
-      drawer: HomeDrawer(),
+      drawer: const HomeDrawer(),
         appBar: AppBar(
           title: const Text('View Product'),
           actions: [
