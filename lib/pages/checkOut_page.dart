@@ -3,6 +3,8 @@ import 'package:ecom_user/customwidgets/header_view.dart';
 import 'package:ecom_user/models/addredd_model.dart';
 import 'package:ecom_user/models/date_model.dart';
 import 'package:ecom_user/models/order_model.dart';
+import 'package:ecom_user/pages/order_success_page.dart';
+import 'package:ecom_user/pages/view_product.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/providers/order_provider.dart';
@@ -35,6 +37,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     cartProvider = Provider.of<CartProvider>(context);
     orderProvider = Provider.of<OrderProvider>(context);
     authProvider = Provider.of<FirebaseAuthProvider>(context);
+    if(authProvider.userModel!.address != null){
+      final address = authProvider.userModel!.address!;
+      _addressLineController.text = address.streetLine;
+      _zipController.text = address.zipCode;
+      city = address.city;
+    }
     super.didChangeDependencies();
   }
 
@@ -235,6 +243,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             DropdownButton<String>(
               hint: const Text('Select City'),
               isExpanded: true,
+              value: city,
               items: cities
                   .map((city) => DropdownMenuItem<String>(
                         value: city,
@@ -267,6 +276,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       return;
     }
 
+    final userModel = authProvider.userModel!;
+    userModel.address = AddressModel(
+        streetLine: _addressLineController.text,
+        city: city!,
+        zipCode: _zipController.text);
     final order = OrderModel(
         orderId: generatedNewOrderId,
         dateModel: DateModel(
@@ -289,9 +303,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       await orderProvider.saveOrder(order);
       await cartProvider.clearCart(authProvider.currentUser!.uid);
       EasyLoading.dismiss();
+      Navigator.pushNamedAndRemoveUntil(context, OrderSuccessPage.routeName, ModalRoute.withName(ViewProductPage.routeName),arguments: order.orderId);
     } catch (error) {
       EasyLoading.dismiss();
       showMsg(context, 'Failed to save order');
+      rethrow;
     }
   }
 }

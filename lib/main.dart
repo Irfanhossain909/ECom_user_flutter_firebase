@@ -17,6 +17,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'pages/order_success_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
         UserListPage.routeName : (context) => const UserListPage(),
         CartPage.routeName : (context) => const CartPage(),
         CheckoutPage.routeName : (context) => const CheckoutPage(),
+        OrderSuccessPage.routeName : (context) => const OrderSuccessPage(),
       },
     );
   }
