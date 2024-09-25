@@ -18,13 +18,14 @@ class OrderModel {
   List<CartModel> cartList;
 
   OrderModel({
-    this.orderId,required this.dateModel,
+    this.orderId,
+    required this.dateModel,
     required this.userModel,
     required this.orderStatus,
     required this.grandTotal,
     required this.delevaryAddress,
     required this.orderSettingModel,
-    required this.additionalInfo,
+    this.additionalInfo,
     required this.cartList,
   });
 

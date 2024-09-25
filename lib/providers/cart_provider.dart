@@ -53,9 +53,16 @@ class CartProvider with ChangeNotifier {
     return DbHelper.removeFromCart(pid, uid);
   }
 
+  Future<void>clearCart( String uid) {
+    return DbHelper.clearCart(uid, cartList);
+  }
+
   Future<void>cartRemoveButtonCliced(String pid, String uid) {
     return DbHelper.removeFromCart(pid, uid);
   }
+
+
+
   getAllCartItemByUSer(String uid){
     DbHelper.getAllCartItemsByUser(uid).listen((snapshot){
       cartList = List.generate(snapshot.docs.length, (index) =>

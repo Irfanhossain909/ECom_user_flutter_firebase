@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user/customwidgets/header_view.dart';
+import 'package:ecom_user/models/addredd_model.dart';
+import 'package:ecom_user/models/date_model.dart';
+import 'package:ecom_user/models/order_model.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
 import 'package:ecom_user/providers/order_provider.dart';
 import 'package:ecom_user/utils/constants.dart';
+import 'package:ecom_user/utils/helper_function.dart';
 import 'package:ecom_user/utils/widgets_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -138,7 +144,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             style: TextStyle(color: Colors.grey),
                           ),
                           Text(
-                            '$currency${cartProvider.getCartSubTotal - orderProvider.settingsModel.deliveryCharge}',
+                            '$currency${orderProvider.getSubTotalAtterDiscount(cartProvider.getCartSubTotal)}',
                             style: TextStyle(
                               color: Colors.green,
                             ),
@@ -191,7 +197,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        'Grand Total  : $currency${cartProvider.getCartSubTotal - orderProvider.settingsModel.deliveryCharge + orderProvider.settingsModel.deliveryCharge + orderProvider.settingsModel.vat}',
+                        'Grand Total  : $currency${orderProvider.getGrandTotal(cartProvider.getCartSubTotal)}',
                         style: TextStyle(fontSize: 20),
                       ),
                     ],
@@ -247,20 +253,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  void _saveOrder() {
-    if(_addressLineController.text.isEmpty){
+  void _saveOrder() async{
+    if (_addressLineController.text.isEmpty) {
       showMsg(context, 'Address Lise in empty');
       return;
     }
-    if(_zipController.text.isEmpty){
+    if (_zipController.text.isEmpty) {
       showMsg(context, 'Zip Code in empty');
       return;
     }
-    if(city == null){
+    if (city == null) {
       showMsg(context, 'City is empty');
       return;
     }
 
-    final order =
+    final order = OrderModel(
+        orderId: generatedNewOrderId,
+        dateModel: DateModel(
+          day: DateTime.now().day,
+          month: DateTime.now().month,
+          year: DateTime.now().year,
+          timestamp: Timestamp.fromDate(DateTime.now()),
+        ),
+        userModel: authProvider.userModel!,
+        orderStatus: OrderStatus.Pending.name,
+        grandTotal: orderProvider.getGrandTotal(cartProvider.getCartSubTotal),
+        delevaryAddress: AddressModel(
+            streetLine: _addressLineController.text,
+            city: city!,
+            zipCode: _zipController.text),
+        orderSettingModel: orderProvider.settingsModel,
+        cartList: cartProvider.cartList);
+    try {
+      EasyLoading.show(status: 'Placing order...');
+      await orderProvider.saveOrder(order);
+      await cartProvider.clearCart(authProvider.currentUser!.uid);
+      EasyLoading.dismiss();
+    } catch (error) {
+      EasyLoading.dismiss();
+      showMsg(context, 'Failed to save order');
+    }
   }
 }

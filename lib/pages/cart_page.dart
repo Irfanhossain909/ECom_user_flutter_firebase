@@ -17,6 +17,15 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Cart'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.read<CartProvider>().clearCart(
+                  context.read<FirebaseAuthProvider>().currentUser!.uid);
+            },
+            child: const Text('Clear'),
+          ),
+        ],
       ),
       body: Consumer<CartProvider>(
         builder: (context, provider, child) => Column(

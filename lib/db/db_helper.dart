@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user/models/cart_model.dart';
+import 'package:ecom_user/models/order_model.dart';
 import 'package:ecom_user/models/user_model.dart';
 
 class DbHelper {
@@ -11,6 +14,7 @@ class DbHelper {
   static const String _collectionProduct = 'Products';
   static const String _collectionCart = 'MyCart';
   static const String _collectionOrderSettings = 'OrderSettings';
+  static const String _collectionOrder = 'Orders';
   static const String _documentOrderConstants = 'OrderConstants';
 
   static Future<void>addNewUser(UserModel user) {
@@ -34,6 +38,9 @@ class DbHelper {
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getAllOrderConstants() =>
       _db.collection(_collectionOrderSettings).doc(_documentOrderConstants).snapshots();
 
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getUser(String uid) =>
+      _db.collection(_collectionUser).doc(uid).snapshots();
+
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllProducts() =>
       _db.collection(_collectionProduct).where('available', isEqualTo: true).snapshots();//use where('available', isEqualTo: true) for getting only avilable product from firebase,
@@ -52,6 +59,43 @@ class DbHelper {
         .doc(pid).delete();
 
   }
+
+
+  static Future<void> clearCart(String uid, List<CartModel> cartList) {
+    final wb = _db.batch();
+    for(final cart in cartList) {
+      final cartDoc = _db.collection(_collectionUser)
+          .doc(uid)
+          .collection(_collectionCart)
+          .doc(cart.productId);
+      wb.delete(cartDoc);
+    }
+    return wb.commit();
+  }
+
+
+  static Future<void> addNewOrder(OrderModel order) async{
+    final wb = _db.batch();//use this line _db.batch() to do multiple query in database,
+    final orderDoc = _db.collection(_collectionOrder).doc(order.orderId);
+    wb.set(orderDoc, order.toMap());
+    final userDoc = _db.collection(_collectionUser).doc(order.userModel.uid);
+    wb.update(userDoc, {'address' : order.userModel.address!.toMap()});
+    for(final cart in order.cartList) {
+      final productSnapshot = await _db.collection(_collectionProduct).
+      doc(cart.productId).get();
+
+      final prevStock = productSnapshot.data()!['stock'];
+      final newStock = prevStock - cart.quantity;
+      final productDoc = _db.collection(_collectionProduct).doc(cart.productId);
+      wb.update(productDoc, {'stock' : newStock});
+    }
+
+
+    return wb.commit();
+  }
+
+
+
   static Future<void> updateCartQuantity (String pid, String uid, num updatedQuantity) {
     return _db.collection(_collectionUser)
         .doc(uid)

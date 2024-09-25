@@ -8,8 +8,15 @@ import '../db/db_helper.dart';
 
 class FirebaseAuthProvider with ChangeNotifier {
   final _auth = FirebaseAuth.instance;
-
+  UserModel? userModel;
   User? get currentUser => _auth.currentUser;
+
+
+  getUserModel() {
+    DbHelper.getUser(currentUser!.uid).listen((snapshot){
+      userModel = UserModel.fromMap(snapshot.data()!);
+    });
+  }
 
   Future<void> loginUser(String email, String password) async {
     final credenchial = await _auth.signInWithEmailAndPassword(
