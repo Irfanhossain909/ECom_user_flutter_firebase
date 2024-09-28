@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom_user/models/cart_model.dart';
+import 'package:ecom_user/models/comment_model.dart';
 import 'package:ecom_user/models/order_model.dart';
 import 'package:ecom_user/models/user_model.dart';
 
@@ -16,6 +17,7 @@ class DbHelper {
   static const String _collectionCart = 'MyCart';
   static const String _collectionOrderSettings = 'OrderSettings';
   static const String _collectionOrder = 'Orders';
+  static const String _collectionComment = 'Comments';
   static const String _collectionRatings = 'Ratings';
   static const String _documentOrderConstants = 'OrderConstants';
 
@@ -103,6 +105,15 @@ class DbHelper {
     wb.set(ratingDoc, ratingModel.toMap());
     return wb.commit();
   }
+  static Future<void> addComment(CommentModel commentModel){
+    final doc = _db.collection(_collectionProduct)
+        .doc(commentModel.productId)
+        .collection(_collectionComment)
+        .doc(); // create document,
+
+    commentModel.id = doc.id;
+    return doc.set(commentModel.toMap());
+  }
 
 
 
@@ -110,6 +121,13 @@ class DbHelper {
     return _db.collection(_collectionProduct)
         .doc(pid)
         .collection(_collectionRatings).get();
+
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getCommentsByProduct(String pid) {
+    return _db.collection(_collectionProduct)
+        .doc(pid)
+        .collection(_collectionComment).snapshots();
 
   }
   static Future<void>updateProductAvgRating(String pid, double avgRating) {

@@ -1,15 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecom_user/models/comment_model.dart';
 import 'package:ecom_user/models/product_model.dart';
 import 'package:ecom_user/pages/product_details.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:ecom_user/providers/cart_provider.dart';
+import 'package:ecom_user/providers/product_provider.dart';
 import 'package:ecom_user/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 class ProductGridItem extends StatelessWidget {
-  const ProductGridItem({super.key, required this.product});
+  const ProductGridItem({super.key, required this.product ,});
 
   final ProductModel product;
 

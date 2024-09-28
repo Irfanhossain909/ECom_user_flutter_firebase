@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom_user/customwidgets/header_view.dart';
+import 'package:ecom_user/models/comment_model.dart';
 import 'package:ecom_user/models/ratting_model.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 
@@ -22,6 +25,7 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  final _commentController = TextEditingController();
   late ProductModel product; //decleard a veriable to recive product id.
   double rating = 1.0;
 
@@ -212,27 +216,115 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
               ],
             ),
+          ),
+          Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Add a comment',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    maxLines: 3,
+                    controller: _commentController,
+                    decoration:
+                        const InputDecoration(border: OutlineInputBorder()),
+                  ),
+                ),
+                TextButton(
+                  onPressed: _saveComment,
+                  child: const Text('Submit'),
+                ),
+              ],
+            ),
+          ),
+          StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: context
+                .read<ProductProvider>()
+                .getCommentByProduct(product.id!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Fetching Comments...');
+              }
+
+              if (snapshot.hasError) {
+                return const Text('Failed to fetch comments');
+              }
+
+              if (snapshot.hasData) {
+                final data = snapshot.data;
+                if (data == null || data.docs.isEmpty) {
+                  return const Text('No comments available');
+                }
+
+                final List<CommentModel> commentList = context
+                    .read<ProductProvider>()
+                    .getCommentList(snapshot.data!);
+                return Column(children: [
+                  HeaderView(title: 'Comment(${commentList.length})'),
+                  for (final comments in commentList)
+                    ListTile(
+                      title: Text(comments.comment),
+                      subtitle: Text(comments.userModel.email),
+                      leading: const CircleAvatar(
+                          child: Icon(Icons.person_2_outlined)),
+                    )
+                ]);
+              }
+
+              return const Text('Fetching Comments');
+            },
           )
         ],
       ),
     );
   }
 
-  void _updateRatting() async{
-
+  void _updateRatting() async {
     EasyLoading.show(status: 'Update Your Rating');
     final ratingModel = RattingModel(
       userModer: context.read<FirebaseAuthProvider>().userModel!,
       productId: product.id!,
       ratting: rating,
     );
-    try{
+    try {
       await context.read<ProductProvider>().addRatings(ratingModel);
       showMsg(context, 'Rating Updated');
       EasyLoading.dismiss();
-    }catch (error){
+    } catch (error) {
       showMsg(context, 'Failed to update rating');
       EasyLoading.dismiss();
     }
+  }
+
+  void _saveComment() async {
+    if (_commentController.text.isEmpty) {
+      showMsg(context, 'Comment is empty');
+      return;
+    }
+    final commentModel = CommentModel(
+      userModel: context.read<FirebaseAuthProvider>().userModel!,
+      productId: product.id!,
+      comment: _commentController.text,
+    );
+    EasyLoading.show(status: 'Please wait');
+    context.read<ProductProvider>().addComment(commentModel).then((value) {
+      EasyLoading.dismiss();
+      showMsg(context, 'Comment Saved');
+      setState(() {
+        _commentController.clear();
+      });
+    }).catchError((error) {
+      EasyLoading.dismiss();
+      showMsg(context, 'Failed to save comment');
+    });
   }
 }

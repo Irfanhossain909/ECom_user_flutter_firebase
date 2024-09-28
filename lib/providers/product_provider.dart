@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecom_user/models/comment_model.dart';
 import 'package:ecom_user/models/ratting_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -19,12 +21,28 @@ class ProductProvider with ChangeNotifier {
         (index) => RattingModel.fromMap(snapshot.docs[index].data()));
 
     double totalRatingValue = 0.0;
-    for(final rating in ratingList){
+    for (final rating in ratingList) {
       totalRatingValue += rating.ratting;
     }
 
     final avgRating = totalRatingValue / ratingList.length;
     return DbHelper.updateProductAvgRating(ratingModel.productId, avgRating);
+  }
+
+  Future<void> addComment(CommentModel commentModel) {
+    return DbHelper.addComment(commentModel);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCommentByProduct(String pid) {
+    return DbHelper.getCommentsByProduct(pid);
+  }
+
+  List<CommentModel> getCommentList(
+      QuerySnapshot<Map<String, dynamic>> snapshot) {
+    return List.generate(
+        snapshot.docs.length,
+        (index) => CommentModel.fromMap(
+            snapshot.docs[index].data())); // give snamshot and return List,
   }
 
   getAllCategory() {
