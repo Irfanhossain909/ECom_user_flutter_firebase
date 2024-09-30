@@ -21,6 +21,8 @@ class ViewProductPage extends StatelessWidget {
     context.read<OrderProvider>().getOrderConstants();
     context.read<CartProvider>().getAllCartItemByUSer(
         context.read<FirebaseAuthProvider>().currentUser!.uid);
+    context.read<OrderProvider>().getUserOrders(
+        context.read<FirebaseAuthProvider>().currentUser!.uid);
     context.read<FirebaseAuthProvider>().getUserModel();
     return Scaffold(
       drawer: const HomeDrawer(),

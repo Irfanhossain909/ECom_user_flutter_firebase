@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecom_user/customwidgets/product_grid_item.dart';
 import 'package:ecom_user/pages/launcher_page.dart';
 import 'package:ecom_user/pages/login_page.dart';
+import 'package:ecom_user/pages/order_page.dart';
 import 'package:ecom_user/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,9 +64,10 @@ class HomeDrawer extends StatelessWidget {
                child: ListTile(
                  onTap: (){
                    Navigator.pop(context);
+                   Navigator.pushNamed(context, OrderPage.routeName);
                  },
-                 title: const Text('Notification'),
-                 leading: const Icon(Icons.notifications),
+                 title: const Text('My Orders'),
+                 leading: const Icon(Icons.monetization_on_rounded),
                ),
              ),
              Card(

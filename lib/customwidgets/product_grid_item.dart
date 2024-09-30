@@ -130,8 +130,8 @@ class ProductGridItem extends StatelessWidget {
                               initialRating: product.avgRatting,
                               minRating: 1.0,
                               direction: Axis.horizontal,
-                              itemCount: 5,
-                              itemSize: 10,
+                              itemCount: 1,
+                              itemSize: 20,
                               itemBuilder: (context, _) => const Icon(
                                 Icons.star,
                                 color: Colors.amber,
@@ -139,14 +139,14 @@ class ProductGridItem extends StatelessWidget {
                               onRatingUpdate: (value) {},
                             ),
                             const SizedBox(
-                              width: 6,
+                              width: 4,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: Text(
                                 product.avgRatting.toString(),
                                 style: const TextStyle(
-                                    fontSize: 10, fontWeight: FontWeight.w800),
+                                    fontSize: 15, fontWeight: FontWeight.w300),
                               ),
                             ),
                           ],

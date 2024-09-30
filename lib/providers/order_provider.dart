@@ -6,13 +6,12 @@ import 'package:flutter/foundation.dart';
 
 class OrderProvider with ChangeNotifier {
   OrderSettingModel settingsModel = OrderSettingModel();
-  
-  
-  
+
+  List<OrderModel> userOrderList = [];
+
   Future<void> saveOrder(OrderModel order) {
     return DbHelper.addNewOrder(order);
   }
-
 
   getOrderConstants() {
     DbHelper.getAllOrderConstants().listen((snapshot) {
@@ -20,7 +19,14 @@ class OrderProvider with ChangeNotifier {
       notifyListeners();
     });
   }
-  
+
+  getUserOrders(String uid) {
+    DbHelper.getOrdersByUser(uid).listen((snapshot) {
+      userOrderList = List.generate(snapshot.docs.length,
+          (index) => OrderModel.fromMap(snapshot.docs[index].data()));
+      notifyListeners();
+    });
+  }
 
   num getDiscountAmountOnSubtotal(num subtotal) {
     return (subtotal * settingsModel.discount) / 100;
@@ -36,6 +42,8 @@ class OrderProvider with ChangeNotifier {
   }
 
   num getGrandTotal(num subtotal) {
-    return (subtotal - getDiscountAmountOnSubtotal(subtotal)) + getVatAmount(subtotal) + settingsModel.deliveryCharge;
+    return (subtotal - getDiscountAmountOnSubtotal(subtotal)) +
+        getVatAmount(subtotal) +
+        settingsModel.deliveryCharge;
   }
 }
