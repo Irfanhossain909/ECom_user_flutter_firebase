@@ -50,6 +50,12 @@ class DbHelper {
       _db.collection(_collectionProduct).where('available', isEqualTo: true).snapshots();//use where('available', isEqualTo: true) for getting only avilable product from firebase,
 
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getOrdersByUser (String uid) => //specefic data get from firebase
+  _db.collection(_collectionOrder)
+      .where('userModel.uid', isEqualTo: uid)
+      .snapshots();
+
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCartItemsByUser(String uid) =>
       _db.collection(_collectionUser)
       .doc(uid)
